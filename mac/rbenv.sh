@@ -23,6 +23,7 @@ then
 fi
 
 # Add rbenv to .powconfig
+# See: https://github.com/37signals/pow/issues/202
 if [[ ! -s "$HOME/.powconfig" ]] || ! grep -q "rbenv" $HOME/.powconfig
 then
   echo "export PATH=\"$HOME/.rbenv/shims:$HOME/.rbenv/bin:\$PATH"\" >> ~/.powconfig
