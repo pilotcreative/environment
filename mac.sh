@@ -1,3 +1,5 @@
+[[ ! -s .rvmrc ]] && echo "You're not in a project directory (.rvmrc is missing)." && exit
+
 # Install RVM if ~/.rvm doesn't exist
 [[ ! -s "$HOME/.rvm/" ]] && curl -s https://rvm.beginrescueend.com/install/rvm -o rvm-installer && sh rvm-installer --version latest && rm rvm-installer
 
@@ -13,17 +15,17 @@
 # Determine project name from current directory
 project_name=`basename \`pwd\``
 
-# Determine Ruby version from .rvmrc
-project_ruby=`source .rvmrc | tail -n1 | sed "s/.*'rvm install \([^']*\)'.*/\1/"`
+# Determine Ruby version that needs to be installed
+missing_ruby=`source .rvmrc | grep "rvm install" | sed "s/.*'rvm install \([^']*\)'.*/\1/"`
 
-# Install Ruby
-rvm install $project_ruby
+# Install Ruby if missing
+[ $missing_ruby ] && rvm install $missing_ruby
 
-# Choose Ruby version and gemset
+# Select current Ruby version
 source .rvmrc
 
 # Install gems
-bundle install --without production
+bundle check || bundle install --without production
 
 # Use sample database config
 [[ ! -s "config/database.yml" ]] && cp config/database.yml{.example,}
@@ -35,10 +37,7 @@ bundle exec rake db:setup
 [[ ! -s "$HOME/.pow/" ]] && curl get.pow.cx | sh
 
 # Add to Pow
-ln -s "`pwd`" ~/.pow/
+[[ ! -s "$HOME/.pow/$project_name" ]] && ln -s "`pwd`" ~/.pow/
 
 # Open project in default browser
 open http://$project_name.dev
-
-# Run tests
-bundle exec rake
