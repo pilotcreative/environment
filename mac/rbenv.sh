@@ -34,11 +34,16 @@ NAME=`basename \`pwd\``
 # Detect Ruby version
 VERSION=`~/.rbenv/bin/rbenv local`
 
+[ ! $VERSION ] && echo ".rbenv-version file missing. Please re-run this from within project directory." && exit
+
 # Install Ruby if necessary
 [ $VERSION ] && [[ ! -s "$HOME/.rbenv/versions/$VERSION" ]] && ~/.ruby-build/bin/ruby-build $VERSION ~/.rbenv/versions/$VERSION/ && ~/.rbenv/bin/rbenv rehash
 
 # Install bundler
 [[ ! -s "$HOME/.rbenv/shims/bundle" ]] && ~/.rbenv/bin/rbenv exec gem install bundler && ~/.rbenv/bin/rbenv rehash
+
+# Install powify
+[[ ! -s "$HOME/.rbenv/shims/powify" ]] && ~/.rbenv/bin/rbenv exec gem install powify && ~/.rbenv/bin/rbenv rehash
 
 # Install gems
 ~/.rbenv/bin/rbenv exec bundle check || ~/.rbenv/bin/rbenv exec bundle install --without=production
@@ -51,6 +56,9 @@ VERSION=`~/.rbenv/bin/rbenv local`
 
 # Add to Pow
 [[ ! -s "$HOME/.pow/$NAME" ]] && ln -s "`pwd`" ~/.pow/
+
+# Restart Pow
+~/.rbenv/bin/rbenv exec powify server restart
 
 # Open project in default browser
 open http://$NAME.dev
