@@ -15,7 +15,6 @@ if [[ ! $PATH == *rbenv* ]]
 then
   echo "export PATH=\"$HOME/.rbenv/shims:$HOME/.rbenv/bin:\$PATH"\" >> ~/.profile
   echo "export PATH=\"$HOME/.rbenv/shims:$HOME/.rbenv/bin:\$PATH"\" >> ~/.powconfig
-  `killall -HUP pow`
 fi
 
 # Add ruby-build to .profile
