@@ -29,7 +29,7 @@ then
 fi
 
 # Infer project name
-NAME=`basename \`pwd\``
+NAME=`basename "\`pwd\`"`
 
 # Detect Ruby version
 VERSION=`~/.rbenv/bin/rbenv local`
