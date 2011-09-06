@@ -62,4 +62,4 @@ VERSION=`~/.rbenv/bin/rbenv local`
 ~/.rbenv/bin/rbenv exec powify server restart
 
 # Open project in default browser
-open http://$NAME.dev
+open -g http://$NAME.dev
