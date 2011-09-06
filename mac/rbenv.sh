@@ -10,17 +10,22 @@
 # Install Pow if it hasn't been installed yet
 [[ ! -s "$HOME/.pow" ]] && curl get.pow.cx | sh
 
-# Add rbenv to .profile and .powconfig
-if [[ ! $PATH == *rbenv* ]]
+# Add rbenv to .profile
+if [[ ! -s "$HOME/.profile" ]] || ! grep -q "rbenv" $HOME/.profile
 then
   echo "export PATH=\"$HOME/.rbenv/shims:$HOME/.rbenv/bin:\$PATH"\" >> ~/.profile
-  echo "export PATH=\"$HOME/.rbenv/shims:$HOME/.rbenv/bin:\$PATH"\" >> ~/.powconfig
 fi
 
 # Add ruby-build to .profile
-if [[ ! $PATH == *ruby-build* ]]
+if [[ ! -s "$HOME/.profile" ]] || ! grep -q "ruby-build" $HOME/.profile
 then
   echo 'export PATH="$HOME/.ruby-build/bin:$PATH"' >> ~/.profile
+fi
+
+# Add rbenv to .powconfig
+if [[ ! -s "$HOME/.powconfig" ]] || ! grep "rbenv" $HOME/.powconfig
+then
+  echo "export PATH=\"$HOME/.rbenv/shims:$HOME/.rbenv/bin:\$PATH"\" >> ~/.powconfig
 fi
 
 # Infer project name
