@@ -1,11 +1,20 @@
+# Require GCC / Xcode
+`which gcc 1> /dev/null` || (echo "Please install Xcode before continuing: http://developer.apple.com/technologies/xcode.html" && exit)
+
+# Install homebrew
+[[ ! -x "/usr/local/bin/brew" ]] && /usr/bin/ruby -e "$(curl -fsSL https://raw.github.com/gist/323731)"
+
+# Install git
+[[ ! -x "/usr/local/bin/git" ]] && /usr/local/bin/brew install git
+
 # Attempt to load .profile
 [[ -s "$HOME/.profile" ]] && source ~/.profile
 
 # Install rbenv
-[[ ! -s "$HOME/.rbenv" ]] && git clone git://github.com/sstephenson/rbenv.git ~/.rbenv
+[[ ! -s "$HOME/.rbenv" ]] && /usr/local/bin/git clone git://github.com/sstephenson/rbenv.git ~/.rbenv
 
 # Install ruby-build
-[[ ! -s "$HOME/.ruby-build" ]] && git clone git://github.com/sstephenson/ruby-build.git ~/.ruby-build
+[[ ! -s "$HOME/.ruby-build" ]] && /usr/local/bin/git clone git://github.com/sstephenson/ruby-build.git ~/.ruby-build
 
 # Install Pow if it hasn't been installed yet
 [[ ! -s "$HOME/.pow" ]] && curl get.pow.cx | sh
@@ -35,7 +44,7 @@ NAME=`basename "\`pwd\`"`
 # Detect Ruby version
 VERSION=`~/.rbenv/bin/rbenv local`
 
-[ ! $VERSION ] && echo ".rbenv-version file missing. Please re-run this from within project directory." && exit
+[ ! $VERSION ] && echo ".rbenv-version file missing. Please re-run this from the project directory once you’ve cloned it with git." && exit
 
 # Install Ruby if necessary
 [ $VERSION ] && [[ ! -s "$HOME/.rbenv/versions/$VERSION" ]] && ~/.ruby-build/bin/ruby-build $VERSION ~/.rbenv/versions/$VERSION/ && ~/.rbenv/bin/rbenv rehash
