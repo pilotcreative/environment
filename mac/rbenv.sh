@@ -1,5 +1,5 @@
-# Verify GCC
-GCC=`(/usr/bin/gcc --version | head -n1 | grep -v LLVM) || (/usr/bin/gcc-4.2 --version | head -n1 | grep -v LLVM)`
+# Check for non-LLVM GCC 4.2
+GCC=`/usr/bin/gcc-4.2 --version 2> /dev/null | head -n1 | grep -v LLVM`
 
 # Install GCC
 if [ ! "$GCC" ]
