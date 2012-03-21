@@ -4,11 +4,11 @@ GCC=`/usr/bin/gcc-4.2 --version 2> /dev/null | head -n1 | grep -v LLVM`
 # Install GCC
 if [ ! "$GCC" ]
 then
-  if [ ! -s "/tmp/GCC-10.7-v2.pkg" ]
+  if [ ! -s "/tmp/command_line_tools_for_xcode.dmg" ]
   then
-    `curl -fsSLo /tmp/GCC-10.7-v2.pkg https://github.com/downloads/kennethreitz/osx-gcc-installer/GCC-10.7-v2.pkg` || exit
+    `curl -fsSLo /tmp/command_line_tools_for_xcode.dmg http://adcdownload.apple.com/Developer_Tools/command_line_tools_for_xcode__march_2012/command_line_tools_for_xcode.dmg` || exit
   fi
-  `open /tmp/GCC-10.7-v2.pkg` && echo "Please re-run this script after you’ve installed GCC" && exit
+  `open /tmp/command_line_tools_for_xcode.dmg` && echo "Please re-run this script after you’ve installed GCC" && exit
 fi
 
 # Install homebrew
