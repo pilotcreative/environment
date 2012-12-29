@@ -35,6 +35,13 @@ then
   /usr/local/bin/git clone git://github.com/sstephenson/rbenv.git ~/.rbenv || exit
 fi
 
+# Install rbenv-vars
+if [[ ! -s "$HOME/.rbenv/plugins/rbenv-vars" ]]
+then
+  mkdir -p ~/.rbenv/plugins
+  /usr/local/bin/git clone git://github.com/sstephenson/rbenv-vars.git ~/.rbenv/plugins/ || exit
+fi
+
 # Install ruby-build
 if [[ ! -s "$HOME/.ruby-build" ]]
 then
@@ -63,7 +70,7 @@ fi
 # See: https://github.com/37signals/pow/issues/202
 if [[ ! -s "$HOME/.powconfig" ]] || ! grep -q "rbenv" $HOME/.powconfig
 then
-  echo "export PATH=\"$HOME/.rbenv/shims:$HOME/.rbenv/bin:\$PATH"\" >> ~/.powconfig || exit
+  echo "export PATH=\"\$HOME/.rbenv/shims:\$HOME/.rbenv/bin:\$PATH"\" >> ~/.powconfig || exit
 fi
 
 # Infer project name
@@ -99,6 +106,12 @@ fi
 if [[ ! -s "config/database.yml" ]]
 then
   cp config/database.yml{.example,} || exit
+fi
+
+# Copy env
+if [[ ! -s ".rbenv-vars" ]]
+then
+  cp config/vars .rbenv-vars || exit
 fi
 
 # Run project setup
