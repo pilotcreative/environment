@@ -16,7 +16,7 @@ GCC=`/usr/bin/gcc --version 2> /dev/null | head -n1 | grep GCC | grep 4.2 | grep
 # Install GCC
 if [ ! "$GCC" ]
 then
-  error "[ ] Please install Command Line Tools for Xcode and re-run this script."
+  error "[ ] Please install Command Line Tools for Xcode and re-run this script"
 fi
 
 # Install homebrew
