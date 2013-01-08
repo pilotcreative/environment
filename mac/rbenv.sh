@@ -3,7 +3,12 @@ function notice() {
 }
 
 function error() {
-  notice "$1"
+  if [ "$1" ]
+  then
+    notice "$1"
+  else
+    notice "[ ] Please email Matt."
+  fi
   exit 1
 }
 
@@ -22,36 +27,36 @@ fi
 # Install homebrew
 if [[ ! -x "/usr/local/bin/brew" ]]
 then
-  /usr/bin/ruby -e "$(curl -fsSL https://raw.github.com/gist/323731)" || error "[ ] Please contact Matt"
+  /usr/bin/ruby -e "$(curl -fsSL https://raw.github.com/gist/323731)" || error
   notice "[✔] Installed Homebrew"
 else
-  /usr/local/bin/brew update || error "[ ] Please contact Matt"
+  /usr/local/bin/brew update || error
   notice "[✔] Updated Homebrew"
 fi
 
 # Install git
 if [[ ! -x "/usr/local/bin/git" ]]
 then
-  /usr/local/bin/brew install git || error "[ ] Please contact Matt"
+  /usr/local/bin/brew install git || error
   notice "[✔] Installed git"
 else
-  /usr/local/bin/brew upgrade git || error "[ ] Please contact Matt"
+  /usr/local/bin/brew upgrade git || error
   notice "[✔] Updated git"
 fi
 
 # Attempt to load .profile
 if [[ -s "$HOME/.profile" ]]
-then 
-  source ~/.profile || error "[ ] Please contact Matt"
+then
+  source ~/.profile || error
 fi
 
 # Install rbenv
 if [[ ! -s "$HOME/.rbenv" ]]
 then
-  /usr/local/bin/git clone -q git://github.com/sstephenson/rbenv.git ~/.rbenv || error "[ ] Please contact Matt"
+  /usr/local/bin/git clone -q git://github.com/sstephenson/rbenv.git ~/.rbenv || error
   notice "[✔] Installed rbenv"
 else
-  ( cd ~/.rbenv && /usr/local/bin/git pull -q origin master ) || error "[ ] Please contact Matt"
+  ( cd ~/.rbenv && /usr/local/bin/git pull -q origin master ) || error
   notice "[✔] Updated rbenv"
 fi
 
@@ -59,47 +64,47 @@ fi
 if [[ ! -s "$HOME/.rbenv/plugins/rbenv-vars" ]]
 then
   mkdir -p ~/.rbenv/plugins
-  /usr/local/bin/git clone -q git://github.com/sstephenson/rbenv-vars.git ~/.rbenv/plugins/rbenv-vars || error "[ ] Please contact Matt"
+  /usr/local/bin/git clone -q git://github.com/sstephenson/rbenv-vars.git ~/.rbenv/plugins/rbenv-vars || error
   notice "[✔] Installed rbenv-vars"
 else
-  ( cd ~/.rbenv/plugins && /usr/local/bin/git pull -q origin master ) || error "[ ] Please contact Matt"
+  ( cd ~/.rbenv/plugins && /usr/local/bin/git pull -q origin master ) || error
   notice "[✔] Updated rbenv-vars"
 fi
 
 # Install ruby-build
 if [[ ! -s "$HOME/.ruby-build" ]]
 then
-  /usr/local/bin/gidt clone -q git://github.com/sstephenson/ruby-build.git ~/.ruby-build || error "[ ] Please contact Matt"
+  /usr/local/bin/gidt clone -q git://github.com/sstephenson/ruby-build.git ~/.ruby-build || error
   notice "[✔] Installed ruby-build"
 else
-  ( cd ~/.ruby-build && /usr/local/bin/git pull -q origin master ) || error "[ ] Please contact Matt"
+  ( cd ~/.ruby-build && /usr/local/bin/git pull -q origin master ) || error
   notice "[✔] Updated ruby-build"
 fi
 
 # Install Pow if it hasn't been installed yet
 if [[ ! -s "$HOME/.pow" ]]
 then
-  ( curl get.pow.cx | sh ) || error "[ ] Please contact Matt"
+  ( curl get.pow.cx | sh ) || error
   notice "[✔] Installed Pow"
 fi
 
 # Add rbenv to .profile
 if [[ ! -s "$HOME/.profile" ]] || ! grep -q "rbenv" $HOME/.profile
 then
-  echo "export PATH=\"$HOME/.rbenv/shims:$HOME/.rbenv/bin:\$PATH"\" >> ~/.profile || error "[ ] Please contact Matt"
+  echo "export PATH=\"$HOME/.rbenv/shims:$HOME/.rbenv/bin:\$PATH"\" >> ~/.profile || error
 fi
 
 # Add ruby-build to .profile
 if [[ ! -s "$HOME/.profile" ]] || ! grep -q "ruby-build" $HOME/.profile
 then
-  echo 'export PATH="$HOME/.ruby-build/bin:$PATH"' >> ~/.profile || error "[ ] Please contact Matt"
+  echo 'export PATH="$HOME/.ruby-build/bin:$PATH"' >> ~/.profile || error
 fi
 
 # Add rbenv to .powconfig
 # See: https://github.com/37signals/pow/issues/202
 if [[ ! -s "$HOME/.powconfig" ]] || ! grep -q "rbenv" $HOME/.powconfig
 then
-  echo "export PATH=\"\$HOME/.rbenv/shims:\$HOME/.rbenv/bin:\$PATH"\" >> ~/.powconfig || error "[ ] Please contact Matt"
+  echo "export PATH=\"\$HOME/.rbenv/shims:\$HOME/.rbenv/bin:\$PATH"\" >> ~/.powconfig || error
 fi
 
 # Infer project name
@@ -113,45 +118,45 @@ VERSION=`~/.rbenv/bin/rbenv local 2> /dev/null`
 # Install Ruby if necessary
 if [ "$VERSION" ] && [[ ! -s "$HOME/.rbenv/versions/$VERSION" ]]
 then
-  ( ~/.rbenv/bin/rbenv install $VERSION && ~/.rbenv/bin/rbenv rehash ) || error "[ ] Please contact Matt"
+  ( ~/.rbenv/bin/rbenv install $VERSION && ~/.rbenv/bin/rbenv rehash ) || error
   notice "[✔] Installed Ruby $VERSION"
 fi
 
 # Install bundler
 if ( ~/.rbenv/bin/rbenv which bundle )
 then
-  ( ~/.rbenv/bin/rbenv exec gem update bundler --pre && ~/.rbenv/bin/rbenv rehash ) || error "[ ] Please contact Matt"
+  ( ~/.rbenv/bin/rbenv exec gem update bundler --pre && ~/.rbenv/bin/rbenv rehash ) || error
   notice "[✔] Updated bundler"
 else
-  ( ~/.rbenv/bin/rbenv exec gem install bundler --pre && ~/.rbenv/bin/rbenv rehash ) || error "[ ] Please contact Matt"
+  ( ~/.rbenv/bin/rbenv exec gem install bundler --pre && ~/.rbenv/bin/rbenv rehash ) || error
   notice "[✔] Installed bundler"
 fi
 
 # Install powify
 if ( ~/.rbenv/bin/rbenv which powify )
 then
-  ( ~/.rbenv/bin/rbenv exec gem update powify && ~/.rbenv/bin/rbenv rehash ) || error "[ ] Please contact Matt"
+  ( ~/.rbenv/bin/rbenv exec gem update powify && ~/.rbenv/bin/rbenv rehash ) || error
   notice "[✔] Updated powify"
 else
-  ( ~/.rbenv/bin/rbenv exec gem install powify && ~/.rbenv/bin/rbenv rehash ) || error "[ ] Please contact Matt"
+  ( ~/.rbenv/bin/rbenv exec gem install powify && ~/.rbenv/bin/rbenv rehash ) || error
   notice "[✔] Installed powify"
 fi
 
 # Install gems
-( ~/.rbenv/bin/rbenv exec bundle check > /dev/null || ~/.rbenv/bin/rbenv exec bundle install --without=production ) || error "[ ] Please contact Matt"
+( ~/.rbenv/bin/rbenv exec bundle check > /dev/null || ~/.rbenv/bin/rbenv exec bundle install --without=production ) || error
 notice "[✔] Updated gems"
 
 # Copy database config
 if [[ ! -s "config/database.yml" ]]
 then
-  cp config/database.yml{.example,} || error "[ ] Please contact Matt"
+  cp config/database.yml{.example,} || error
   notice "[✔] Copied sample database configuration"
 fi
 
 # Copy env
 if [[ ! -s ".rbenv-vars" ]]
 then
-  cp config/vars .rbenv-vars || error "[ ] Please contact Matt"
+  cp config/vars .rbenv-vars || error
   notice "[✔] Copied sample environment variables"
   error "[ ] Please set your environment variables in .rbenv-vars"
 fi
@@ -159,22 +164,22 @@ fi
 # Migrate migrations or run project setup
 if ( ~/.rbenv/bin/rbenv exec bundle exec rake db:migrate:status 1>/dev/null )
 then
-  ( ~/.rbenv/bin/rbenv exec bundle exec rake db:migrate ) || error "[ ] Please contact Matt"
+  ( ~/.rbenv/bin/rbenv exec bundle exec rake db:migrate ) || error
   notice "[✔] Ran database migrations"
 else
-  ( ~/.rbenv/bin/rbenv exec bundle exec rake db:setup ) || error "[ ] Please contact Matt"
+  ( ~/.rbenv/bin/rbenv exec bundle exec rake db:setup ) || error
   notice "[✔] Ran database setup"
 fi
 
 # Add to Pow
 if [[ ! -s "$HOME/.pow/$NAME" ]]
 then
-  ln -s "`pwd`" ~/.pow/ || error "[ ] Please contact Matt"
+  ln -s "`pwd`" ~/.pow/ || error
   notice "[✔] Added ‘$NAME’ to Pow"
 fi
 
 # Restart Pow
-( ~/.rbenv/bin/rbenv exec powify server restart ) || error "[ ] Please contact Matt"
+( ~/.rbenv/bin/rbenv exec powify server restart ) || error
 notice "[✔] Restarted Pow"
 
 # Open project in default browser
