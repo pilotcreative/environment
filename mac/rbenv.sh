@@ -61,7 +61,7 @@ fi
 if [[ ! -s "$HOME/.rbenv/plugins/rbenv-vars" ]]
 then
   mkdir -p ~/.rbenv/plugins
-  /usr/local/bin/git clone -q git://github.com/sstephenson/rbenv-vars.git ~/.rbenv/plugins/ || error "[ ] Please contact Matt"
+  /usr/local/bin/git clone -q git://github.com/sstephenson/rbenv-vars.git ~/.rbenv/plugins/rbenv-vars || error "[ ] Please contact Matt"
   notice "[✔] Installed rbenv-vars"
 else
   ( cd ~/.rbenv/plugins && /usr/local/bin/git pull -q origin master ) || error "[ ] Please contact Matt"
@@ -110,7 +110,7 @@ NAME=`basename "\`pwd\`"`
 # Detect Ruby version
 VERSION=`~/.rbenv/bin/rbenv local 2> /dev/null`
 
-[ ! "$VERSION" ] && error "[ ] .rbenv-version file missing. Please re-run this script from the project directory once you’ve cloned it with git."
+[ ! "$VERSION" ] && error "[ ] .ruby-version file is missing. Please re-run this script from the project directory once you’ve cloned it with git."
 
 # Install Ruby if necessary
 if [ "$VERSION" ] && [[ ! -s "$HOME/.rbenv/versions/$VERSION" ]]
