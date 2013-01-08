@@ -154,6 +154,8 @@ fi
 if [[ ! -s ".rbenv-vars" ]]
 then
   cp config/vars .rbenv-vars || error "[ ] Please contact Matt"
+  notice "[✔] Copied sample environment variables"
+  error "[ ] Please set your environment variables in .rbenv-vars"
 fi
 
 # Migrate migrations or run project setup
