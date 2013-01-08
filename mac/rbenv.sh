@@ -1,26 +1,26 @@
-# Check for non-LLVM GCC 4.2
-GCC=`/usr/bin/gcc-4.2 --version 2> /dev/null | head -n1 | grep -v LLVM`
+# Check for LLVM GCC 4.2
+GCC=`/usr/bin/gcc --version 2> /dev/null | head -n1 | grep GCC | grep 4.2 | grep LLVM`
 
 # Install GCC
 if [ ! "$GCC" ]
 then
-  if [ ! -s "/tmp/command_line_tools_for_xcode.dmg" ]
-  then
-    `curl -fsSLo /tmp/command_line_tools_for_xcode.dmg http://adcdownload.apple.com/Developer_Tools/command_line_tools_for_xcode__march_2012/command_line_tools_for_xcode.dmg` || exit
-  fi
-  `open /tmp/command_line_tools_for_xcode.dmg` && echo "Please re-run this script after you’ve installed GCC" && exit
+  echo "Please install Command Line Tools for Xcode and re-run this script." && exit
 fi
 
 # Install homebrew
 if [[ ! -x "/usr/local/bin/brew" ]]
 then
   /usr/bin/ruby -e "$(curl -fsSL https://raw.github.com/gist/323731)" || exit
+else
+  /usr/local/bin/brew update || exit
 fi
 
 # Install git
 if [[ ! -x "/usr/local/bin/git" ]] 
 then 
   /usr/local/bin/brew install git || exit
+else
+  /usr/local/bin/brew upgrade git || exit
 fi
 
 # Attempt to load .profile
@@ -33,6 +33,8 @@ fi
 if [[ ! -s "$HOME/.rbenv" ]]
 then
   /usr/local/bin/git clone git://github.com/sstephenson/rbenv.git ~/.rbenv || exit
+else
+  ( cd ~/.rbenv && /usr/local/bin/git pull origin master ) || exit
 fi
 
 # Install rbenv-vars
@@ -40,12 +42,16 @@ if [[ ! -s "$HOME/.rbenv/plugins/rbenv-vars" ]]
 then
   mkdir -p ~/.rbenv/plugins
   /usr/local/bin/git clone git://github.com/sstephenson/rbenv-vars.git ~/.rbenv/plugins/ || exit
+else
+  ( cd ~/.rbenv/plugins && /usr/local/bin/git pull origin master ) || exit
 fi
 
 # Install ruby-build
 if [[ ! -s "$HOME/.ruby-build" ]]
 then
   /usr/local/bin/git clone git://github.com/sstephenson/ruby-build.git ~/.ruby-build || exit
+else
+  ( cd ~/.ruby-build && /usr/local/bin/git pull origin master ) || exit
 fi
 
 # Install Pow if it hasn't been installed yet
@@ -84,19 +90,23 @@ VERSION=`~/.rbenv/bin/rbenv local 2> /dev/null`
 # Install Ruby if necessary
 if [ "$VERSION" ] && [[ ! -s "$HOME/.rbenv/versions/$VERSION" ]]
 then
-  ( ~/.ruby-build/bin/ruby-build $VERSION ~/.rbenv/versions/$VERSION/ && ~/.rbenv/bin/rbenv rehash ) || exit
+  ( ~/.ruby-build/bin/rbenv install $VERSION && ~/.rbenv/bin/rbenv rehash ) || exit
 fi
 
 # Install bundler
 if [[ ! -s "$HOME/.rbenv/shims/bundle" ]]
 then
   ( ~/.rbenv/bin/rbenv exec gem install bundler && ~/.rbenv/bin/rbenv rehash ) || exit
+else
+  ( ~/.rbenv/bin/rbenv exec gem update bundler && ~/.rbenv/bin/rbenv rehash ) || exit
 fi
 
 # Install powify
 if [[ ! -s "$HOME/.rbenv/shims/powify" ]]
 then
   ( ~/.rbenv/bin/rbenv exec gem install powify && ~/.rbenv/bin/rbenv rehash ) || exit
+else
+  ( ~/.rbenv/bin/rbenv exec gem update powify && ~/.rbenv/bin/rbenv rehash ) || exit
 fi
 
 # Install gems
