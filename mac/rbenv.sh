@@ -1,5 +1,3 @@
-# Define notice and error function
-
 function notice() {
   echo "$1" >&2
 }
