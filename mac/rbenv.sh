@@ -74,7 +74,7 @@ fi
 # Install ruby-build
 if [[ ! -s "$HOME/.ruby-build" ]]
 then
-  /usr/local/bin/gidt clone -q git://github.com/sstephenson/ruby-build.git ~/.ruby-build || error
+  /usr/local/bin/git clone -q git://github.com/sstephenson/ruby-build.git ~/.ruby-build || error
   notice "[✔] Installed ruby-build"
 else
   ( cd ~/.ruby-build && /usr/local/bin/git pull -q origin master ) || error
