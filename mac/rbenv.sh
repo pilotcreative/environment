@@ -174,6 +174,14 @@ fi
 ( ~/.rbenv/bin/rbenv exec bundle check > /dev/null || ~/.rbenv/bin/rbenv exec bundle install --without=production ) || error
 notice "[✔] Updated gems"
 
+# Install Heroku
+if ( which heroku )
+then
+  notice "[✔] Heroku Toolbelt installed"
+else
+  error "[ ] Please install Heroku Toolbelt from https://toolbelt.heroku.com"
+fi
+
 # Migrate migrations or run project setup
 if ( ~/.rbenv/bin/rbenv exec bundle exec rake db:migrate:status 2>/dev/null )
 then
