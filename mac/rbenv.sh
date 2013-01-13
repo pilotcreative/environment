@@ -44,12 +44,6 @@ else
   notice "[✔] Updated git"
 fi
 
-# Attempt to load .profile
-if [[ -s "$HOME/.profile" ]]
-then
-  source ~/.profile || error
-fi
-
 # Install rbenv
 if [[ ! -s "$HOME/.rbenv" ]]
 then
@@ -94,17 +88,22 @@ then
   echo "export PATH=\"$HOME/.rbenv/shims:$HOME/.rbenv/bin:\$PATH"\" >> ~/.profile || error
 fi
 
+# Add rbenv to .zprofile
+if [[ ! -s "$HOME/.zprofile" ]] || ! grep -q "rbenv" $HOME/.zprofile
+then
+  echo "export PATH=\"$HOME/.rbenv/shims:$HOME/.rbenv/bin:\$PATH"\" >> ~/.zprofile || error
+fi
+
 # Add ruby-build to .profile
 if [[ ! -s "$HOME/.profile" ]] || ! grep -q "ruby-build" $HOME/.profile
 then
   echo 'export PATH="$HOME/.ruby-build/bin:$PATH"' >> ~/.profile || error
 fi
 
-# Add rbenv to .powconfig
-# See: https://github.com/37signals/pow/issues/202
-if [[ ! -s "$HOME/.powconfig" ]] || ! grep -q "rbenv" $HOME/.powconfig
+# Add ruby-build to .zprofile
+if [[ ! -s "$HOME/.zprofile" ]] || ! grep -q "ruby-build" $HOME/.zprofile
 then
-  echo "export PATH=\"\$HOME/.rbenv/shims:\$HOME/.rbenv/bin:\$PATH"\" >> ~/.powconfig || error
+  echo 'export PATH="$HOME/.ruby-build/bin:$PATH"' >> ~/.zprofile || error
 fi
 
 # Infer project name
@@ -115,11 +114,40 @@ VERSION=`~/.rbenv/bin/rbenv local 2> /dev/null`
 
 [ ! "$VERSION" ] && error "[ ] .ruby-version file is missing. Please re-run this script from the project directory once you’ve cloned it with git."
 
+# Copy database config
+if [[ ! -s "config/database.yml" ]]
+then
+  cp config/database.yml{.example,} || error
+  notice "[✔] Copied sample database configuration"
+fi
+
+# Copy env
+if [[ ! -s ".rbenv-vars" ]]
+then
+  cp config/vars .rbenv-vars || error
+  notice "[✔] Copied sample environment variables"
+  error "[ ] Please set your environment variables in .rbenv-vars"
+fi
+
 # Install Ruby if necessary
 if [ "$VERSION" ] && [[ ! -s "$HOME/.rbenv/versions/$VERSION" ]]
 then
   ( ~/.rbenv/bin/rbenv install $VERSION && ~/.rbenv/bin/rbenv rehash ) || error
   notice "[✔] Installed Ruby $VERSION"
+fi
+
+# Install Postgres if necessary
+if ( cat config/database.yml | grep postgresql ) && ! ( [[ -s "/Applications/Postgres.app" ]] || [[ -s "~/Applications/Postgres.app" ]] )
+then
+  error "[ ] Please install Postgres.app from http://postgresapp.com"
+fi
+
+# Make sure Postgres is running
+if ( psql -h localhost -l 2>/dev/null )
+then
+  notice "[✔] Postgres.app running"
+else
+  error "[ ] Please make sure Postgres.app is running"
 fi
 
 # Install bundler
@@ -146,23 +174,8 @@ fi
 ( ~/.rbenv/bin/rbenv exec bundle check > /dev/null || ~/.rbenv/bin/rbenv exec bundle install --without=production ) || error
 notice "[✔] Updated gems"
 
-# Copy database config
-if [[ ! -s "config/database.yml" ]]
-then
-  cp config/database.yml{.example,} || error
-  notice "[✔] Copied sample database configuration"
-fi
-
-# Copy env
-if [[ ! -s ".rbenv-vars" ]]
-then
-  cp config/vars .rbenv-vars || error
-  notice "[✔] Copied sample environment variables"
-  error "[ ] Please set your environment variables in .rbenv-vars"
-fi
-
 # Migrate migrations or run project setup
-if ( ~/.rbenv/bin/rbenv exec bundle exec rake db:migrate:status 1>/dev/null )
+if ( ~/.rbenv/bin/rbenv exec bundle exec rake db:migrate:status 2>/dev/null )
 then
   ( ~/.rbenv/bin/rbenv exec bundle exec rake db:migrate ) || error
   notice "[✔] Ran database migrations"
@@ -175,12 +188,15 @@ fi
 if [[ ! -s "$HOME/.pow/$NAME" ]]
 then
   ln -s "`pwd`" ~/.pow/ || error
-  notice "[✔] Added ‘$NAME’ to Pow"
+  notice "[✔] Added $NAME to Pow"
 fi
 
 # Restart Pow
-( ~/.rbenv/bin/rbenv exec powify server restart ) || error
+( ~/.rbenv/bin/rbenv exec powify server restart ) && ( ~/.rbenv/bin/rbenv exec powify restart ) || error
 notice "[✔] Restarted Pow"
+
+# Wait
+( sleep 5s )
 
 # Open project in default browser
 open -g http://$NAME.dev
