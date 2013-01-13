@@ -27,7 +27,7 @@ fi
 # Install homebrew
 if [[ ! -x "/usr/local/bin/brew" ]]
 then
-  /usr/bin/ruby -e "$(curl -fsSL https://raw.github.com/gist/323731)" || error
+  /usr/bin/ruby -e "$(curl -fsSkL raw.github.com/mxcl/homebrew/go)" || error
   notice "[✔] Installed Homebrew"
 else
   /usr/local/bin/brew update || error
