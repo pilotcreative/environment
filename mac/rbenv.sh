@@ -40,7 +40,7 @@ then
   /usr/local/bin/brew install git || error
   notice "[✔] Installed git"
 else
-  /usr/local/bin/brew upgrade git || error
+  OUTPUT=`/usr/local/bin/brew upgrade git` || (echo "$OUTPUT" | grep "already installed") || error
   notice "[✔] Updated git"
 fi
 
