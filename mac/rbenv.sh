@@ -137,7 +137,7 @@ then
 fi
 
 # Install Postgres if necessary
-if ( cat config/database.yml | grep postgresql ) && ! ( [[ -s "/Applications/Postgres.app" ]] || [[ -s "~/Applications/Postgres.app" ]] )
+if ( cat config/database.yml | grep postgresql ) && ! ( [[ -s /Applications/Postgres.app ]] || [[ -s ~/Applications/Postgres.app ]] )
 then
   error "[ ] Please install Postgres.app from http://postgresapp.com"
 fi
